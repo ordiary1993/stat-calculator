@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stat Calculator | RPG Character Stats Tool</title>
+    <meta name="description" content="Free stat calculator for RPG characters. Calculate optimal STR, AGI, VIT, INT, DEX, LUK combinations for your build.">
+    <meta name="keywords" content="stat calculator, rpg calculator, character stats, build optimizer">
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f0f2f5;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+            margin-top: 0;
+        }
+        .tagline {
+            color: #7f8c8d;
+            margin-bottom: 25px;
+        }
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            gap: 15px;
+            margin: 25px 0;
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+        }
+        .stat-input {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        .stat-input label {
+            font-weight: 700;
+            color: #3498db;
+            font-size: 1rem;
+        }
+        .stat-input input {
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            width: 100%;
+            transition: border-color 0.3s;
+        }
+        .stat-input input:focus {
+            border-color: #3498db;
+            outline: none;
+        }
+        .stat-input input::placeholder {
+            color: #bbb;
+            font-style: italic;
+            font-size: 0.85rem;
+        }
+        .controls {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin: 25px 0;
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            align-items: flex-end;
+        }
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            flex: 1;
+            min-width: 200px;
+        }
+        .control-group label {
+            font-weight: 700;
+            color: #3498db;
+            font-size: 0.9rem;
+        }
+        select, button {
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            height: 46px;
+        }
+        select {
+            width: 100%;
+            background: white;
+        }
+        button {
+            background: #3498db;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            border: none;
+            min-width: 160px;
+            transition: background 0.3s;
+        }
+        button:hover {
+            background: #2980b9;
+        }
+        .results-container {
+            margin-top: 30px;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 12px;
+            margin-top: 15px;
+        }
+        .stat-item {
+            background: #f8f9fa;
+            padding: 12px 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.95rem;
+            border-left: 4px solid #3498db;
+            border: 1px solid #e0e0e0;
+            border-left-width: 4px;
+        }
+        .summary {
+            margin: 20px 0 10px 0;
+            font-weight: bold;
+            color: #2c3e50;
+            font-size: 1.1rem;
+        }
+        .error {
+            color: #e74c3c;
+            font-weight: bold;
+            margin: 15px 0;
+            padding: 10px;
+            background: #fdf0ef;
+            border-radius: 8px;
+        }
+        nav {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #e0e0e0;
+        }
+        nav a {
+            color: #3498db;
+            text-decoration: none;
+            margin: 0 15px;
+            font-size: 0.9rem;
+        }
+        nav a:hover {
+            text-decoration: underline;
+        }
+        footer {
+            text-align: center;
+            margin-top: 20px;
+            color: #95a5a6;
+            font-size: 0.8rem;
+        }
+        @media (max-width: 600px) {
+            body { padding: 10px; }
+            h1 { font-size: 24px; }
+            .controls { flex-direction: column; }
+            button { width: 100%; }
+            .stat-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>⚡ Stat Calculator</h1>
+        <div class="tagline">Optimize your character builds. Enter fixed stats or leave empty for auto-calculation.</div>
+
+        <div class="stat-grid">
+            <div class="stat-input"><label>💪 STR</label><input type="number" id="str" min="1" max="99" placeholder="Auto" autocomplete="off"></div>
+            <div class="stat-input"><label>🏃 AGI</label><input type="number" id="agi" min="1" max="99" placeholder="Auto" autocomplete="off"></div>
+            <div class="stat-input"><label>🛡️ VIT</label><input type="number" id="vit" min="1" max="99" placeholder="Auto" autocomplete="off"></div>
+            <div class="stat-input"><label>📚 INT</label><input type="number" id="int" min="1" max="99" placeholder="Auto" autocomplete="off"></div>
+            <div class="stat-input"><label>🎯 DEX</label><input type="number" id="dex" min="1" max="99" placeholder="Auto" autocomplete="off"></div>
+            <div class="stat-input"><label>🍀 LUK</label><input type="number" id="luk" min="1" max="99" placeholder="Auto" autocomplete="off"></div>
+        </div>
+
+        <div class="controls">
+            <div class="control-group">
+                <label>📊 Total Status Points</label>
+                <select id="totalPoints">
+                    <option value="1273">Standard Build (1,273 points)</option>
+                    <option value="1325">Advanced Build (1,325 points)</option>
+                </select>
+            </div>
+            <button id="generateBtn">✨ Generate Combinations</button>
+        </div>
+
+        <div class="results-container">
+            <div class="summary" id="summary"></div>
+            <div id="errorMsg" class="error"></div>
+            <div id="combinations" class="stats-grid"></div>
+        </div>
+
+        <nav>
+            <a href="privacy.html">Privacy Policy</a>
+            <a href="contact.html">Contact</a>
+            <a href="about.html">About</a>
+        </nav>
+        <footer>
+            © 2026 Stat Calculator | Free tool for RPG players
+        </footer>
+    </div>
+
+    <script>
+    (function() {
+        // Cost table builder
+        const costMap = new Map();
+        
+        function buildCostMap() {
+            let cost = 0;
+            for (let stat = 1; stat <= 99; stat++) {
+                if (stat > 1) {
+                    let increment;
+                    if (stat <= 11) increment = 2;
+                    else if (stat <= 21) increment = 3;
+                    else if (stat <= 31) increment = 4;
+                    else if (stat <= 41) increment = 5;
+                    else if (stat <= 51) increment = 6;
+                    else if (stat <= 61) increment = 7;
+                    else if (stat <= 71) increment = 8;
+                    else if (stat <= 81) increment = 9;
+                    else if (stat <= 91) increment = 10;
+                    else increment = 11;
+                    cost += increment;
+                }
+                costMap.set(stat, cost);
+            }
+        }
+        buildCostMap();
+
+        const reverseCost = new Map();
+        for (let [stat, c] of costMap) {
+            reverseCost.set(c, stat);
+        }
+        const validCosts = Array.from(reverseCost.keys()).sort((a,b)=>a-b);
+        const statNames = ['STR', 'AGI', 'VIT', 'INT', 'DEX', 'LUK'];
+
+        function generateCombinations(fixedStats, totalPoints) {
+            const fixedIndices = [];
+            const fixedCosts = [];
+            let fixedTotalCost = 0;
+
+            for (let i = 0; i < 6; i++) {
+                if (fixedStats[i] !== null) {
+                    const stat = fixedStats[i];
+                    if (!costMap.has(stat)) {
+                        throw new Error(`Invalid value at ${statNames[i]}: ${stat} (must be 1-99)`);
+                    }
+                    const cost = costMap.get(stat);
+                    fixedIndices.push(i);
+                    fixedCosts.push({ index: i, stat: stat, cost: cost });
+                    fixedTotalCost += cost;
+                }
+            }
+
+            const fixedCount = fixedIndices.length;
+            const flexCount = 6 - fixedCount;
+            let remaining = totalPoints - fixedTotalCost;
+            if (remaining < 0) throw new Error("Total points too low for fixed stats");
+
+            if (flexCount === 0) {
+                if (remaining === 0) {
+                    const result = new Array(6);
+                    fixedCosts.forEach(f => { result[f.index] = f.stat; });
+                    return [result];
+                } else {
+                    return [];
+                }
+            }
+
+            const flexCostCombos = [];
+
+            function findCombos(startIdx, currentCombo, currentSum, depth, maxDepth) {
+                if (depth === maxDepth) {
+                    if (currentSum === remaining) {
+                        flexCostCombos.push([...currentCombo]);
+                    }
+                    return;
+                }
+                
+                const minPossible = validCosts[startIdx] * (maxDepth - depth);
+                const maxPossible = validCosts[validCosts.length-1] * (maxDepth - depth);
+                if (currentSum + minPossible > remaining) return;
+                if (currentSum + maxPossible < remaining) return;
+
+                for (let i = startIdx; i < validCosts.length; i++) {
+                    const cost = validCosts[i];
+                    if (currentSum + cost > remaining) break;
+                    currentCombo.push(cost);
+                    findCombos(i, currentCombo, currentSum + cost, depth + 1, maxDepth);
+                    currentCombo.pop();
+                }
+            }
+
+            findCombos(0, [], 0, 0, flexCount);
+
+            const results = [];
+
+            for (let costCombo of flexCostCombos) {
+                const flexStats = costCombo.map(c => reverseCost.get(c));
+                const sortedFlexStats = [...flexStats].sort((a,b)=>a-b);
+                
+                const result = new Array(6);
+                fixedCosts.forEach(f => { result[f.index] = f.stat; });
+                
+                const flexibleIndices = [];
+                for (let i = 0; i < 6; i++) {
+                    if (fixedStats[i] === null) flexibleIndices.push(i);
+                }
+                
+                for (let j = 0; j < sortedFlexStats.length; j++) {
+                    result[flexibleIndices[j]] = sortedFlexStats[j];
+                }
+                
+                results.push(result);
+            }
+
+            const unique = new Set();
+            const final = [];
+            for (let combo of results) {
+                const key = combo.join(',');
+                if (!unique.has(key)) {
+                    unique.add(key);
+                    final.push(combo);
+                }
+            }
+            return final;
+        }
+
+        function displayResults(combos) {
+            const container = document.getElementById('combinations');
+            const summary = document.getElementById('summary');
+            const errorMsg = document.getElementById('errorMsg');
+            container.innerHTML = '';
+            errorMsg.innerText = '';
+
+            if (combos.length === 0) {
+                summary.innerText = 'No valid combinations found. Try adjusting your fixed stats.';
+                return;
+            }
+
+            summary.innerText = `📊 Found ${combos.length} valid combination${combos.length>1?'s':''}`;
+
+            combos.forEach(combo => {
+                const div = document.createElement('div');
+                div.className = 'stat-item';
+                const display = statNames.map((name, idx) => `${name} ${combo[idx]}`).join(' · ');
+                div.innerText = display;
+                container.appendChild(div);
+            });
+        }
+
+        document.getElementById('generateBtn').addEventListener('click', function() {
+            const str = document.getElementById('str').value;
+            const agi = document.getElementById('agi').value;
+            const vit = document.getElementById('vit').value;
+            const int = document.getElementById('int').value;
+            const dex = document.getElementById('dex').value;
+            const luk = document.getElementById('luk').value;
+
+            const fixedStats = [
+                str === '' ? null : parseInt(str, 10),
+                agi === '' ? null : parseInt(agi, 10),
+                vit === '' ? null : parseInt(vit, 10),
+                int === '' ? null : parseInt(int, 10),
+                dex === '' ? null : parseInt(dex, 10),
+                luk === '' ? null : parseInt(luk, 10)
+            ];
+
+            for (let i = 0; i < 6; i++) {
+                if (fixedStats[i] !== null && (fixedStats[i] < 1 || fixedStats[i] > 99)) {
+                    document.getElementById('errorMsg').innerText = `${statNames[i]} must be between 1 and 99.`;
+                    return;
+                }
+            }
+
+            const totalPoints = parseInt(document.getElementById('totalPoints').value, 10);
+            const errorMsg = document.getElementById('errorMsg');
+            errorMsg.innerText = '';
+
+            try {
+                const combos = generateCombinations(fixedStats, totalPoints);
+                displayResults(combos);
+            } catch (e) {
+                errorMsg.innerText = e.message;
+            }
+        });
+
+        window.onload = function() {
+            document.getElementById('str').value = '';
+            document.getElementById('agi').value = '';
+            document.getElementById('vit').value = '';
+            document.getElementById('int').value = '';
+            document.getElementById('dex').value = '';
+            document.getElementById('luk').value = '';
+        };
+    })();
+    </script>
+</body>
+</html>
