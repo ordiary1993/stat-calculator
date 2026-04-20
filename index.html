@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="google-site-verification" content="23bilHiEEU7G0uZkLJtBwfg2cqJejyNOt86pfHQESck" />
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg'/>">
     <title>Stat Calculator | MMORPG Character Stats Tool</title>
     <meta name="description" content="Free stat calculator for MMORPG characters. Calculate optimal STR, AGI, VIT, INT, DEX, LUK combinations for your build.">
     <meta name="keywords" content="stat calculator, mmorpg calculator, character stats, build optimizer">
@@ -182,27 +183,27 @@
 </head>
 <body>
     <div class="container">
-        <h1>⚡ Stat Calculator</h1>
+        <h1>Stat Calculator</h1>
         <div class="tagline">Optimize your character builds. Enter fixed stats or leave empty for auto-calculation.</div>
 
         <div class="stat-grid">
-            <div class="stat-input"><label>💪 STR</label><input type="number" id="str" min="1" max="99" placeholder="Auto" autocomplete="off"></div>
-            <div class="stat-input"><label>🏃 AGI</label><input type="number" id="agi" min="1" max="99" placeholder="Auto" autocomplete="off"></div>
-            <div class="stat-input"><label>🛡️ VIT</label><input type="number" id="vit" min="1" max="99" placeholder="Auto" autocomplete="off"></div>
-            <div class="stat-input"><label>📚 INT</label><input type="number" id="int" min="1" max="99" placeholder="Auto" autocomplete="off"></div>
-            <div class="stat-input"><label>🎯 DEX</label><input type="number" id="dex" min="1" max="99" placeholder="Auto" autocomplete="off"></div>
-            <div class="stat-input"><label>🍀 LUK</label><input type="number" id="luk" min="1" max="99" placeholder="Auto" autocomplete="off"></div>
+            <div class="stat-input"><label>STR</label><input type="number" id="str" min="1" max="99" placeholder="Auto" autocomplete="off"></div>
+            <div class="stat-input"><label>AGI</label><input type="number" id="agi" min="1" max="99" placeholder="Auto" autocomplete="off"></div>
+            <div class="stat-input"><label>VIT</label><input type="number" id="vit" min="1" max="99" placeholder="Auto" autocomplete="off"></div>
+            <div class="stat-input"><label>INT</label><input type="number" id="int" min="1" max="99" placeholder="Auto" autocomplete="off"></div>
+            <div class="stat-input"><label>DEX</label><input type="number" id="dex" min="1" max="99" placeholder="Auto" autocomplete="off"></div>
+            <div class="stat-input"><label>LUK</label><input type="number" id="luk" min="1" max="99" placeholder="Auto" autocomplete="off"></div>
         </div>
 
         <div class="controls">
             <div class="control-group">
-                <label>📊 Total Status Points</label>
+                <label>Total Status Points</label>
                 <select id="totalPoints">
                     <option value="1273">Non-Transcendent (1,273 points)</option>
                     <option value="1325">Transcendent (1,325 points)</option>
                 </select>
             </div>
-            <button id="generateBtn">✨ Generate Combinations</button>
+            <button id="generateBtn">Generate Combinations</button>
         </div>
 
         <div class="results-container">
@@ -359,7 +360,7 @@
                 return;
             }
 
-            summary.innerText = `📊 Found ${combos.length} valid combination${combos.length>1?'s':''}`;
+            summary.innerText = `Found ${combos.length} valid combination${combos.length>1?'s':''}`;
 
             combos.forEach(combo => {
                 const div = document.createElement('div');
