@@ -1,0 +1,3 @@
+Sitemap: https://ordiary1993.github.io/stat-calculator/sitemap.xml
+User-agent: *
+Allow: /
